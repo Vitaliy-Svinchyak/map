@@ -11,7 +11,7 @@ map.renderMapAreas(
         new Point(269, 477),
         new Point(220, 464),
       ],
-      ''
+      'images/dirt.png'
     ),
     new Area(
       [
@@ -21,7 +21,7 @@ map.renderMapAreas(
         new Point(245, 545),
         new Point(213, 521),
       ],
-      ''
+      'images/house.png'
     ),
     new Area(
       [
@@ -31,7 +31,7 @@ map.renderMapAreas(
         new Point(325, 547),
         new Point(264, 523),
       ],
-      ''
+      'images/rock.jpg'
     )
   ]
 );
