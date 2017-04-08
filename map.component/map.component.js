@@ -4,8 +4,9 @@ var Map = (function () {
      */
     function Map(canvas) {
         this.canvas = canvas;
-        this.offsetTop = 0;
-        this.offsetLeft = 0;
+        this.subTop = 0;
+        this.subLeft = 0;
+        this.offset = 50;
         this.renderedAreas = 0;
         this.context = canvas.getContext('2d');
         this.setWidthAndHeight();
@@ -20,12 +21,12 @@ var Map = (function () {
         this.calculateOffset();
         for (var _i = 0, areas_1 = areas; _i < areas_1.length; _i++) {
             var area = areas_1[_i];
-            area.subOffsetPoints(this.offsetLeft, this.offsetTop);
+            area.subOffsetPoints(this.subLeft, this.subTop);
             area.render(this.context, this.onAreaRendered.bind(this));
         }
     };
     /**
-     * Enables higlighting for areas (in future)
+     * Enables highlighting for areas (in future)
      */
     Map.prototype.onAreaRendered = function () {
         this.renderedAreas++;
@@ -38,8 +39,8 @@ var Map = (function () {
      */
     Map.prototype.calculateOffset = function () {
         var minimalPoint = this.findMinimalPoint();
-        this.offsetTop = minimalPoint.y - 50;
-        this.offsetLeft = minimalPoint.x - 50;
+        this.subTop = minimalPoint.y - this.offset;
+        this.subLeft = minimalPoint.x - this.offset;
     };
     /**
      * Finds the most left x and the most top y coordinates and returns a Point with that coordinates
@@ -65,7 +66,8 @@ var Map = (function () {
      * Dynamically determines how large a canvas can be and sets it size
      */
     Map.prototype.setWidthAndHeight = function () {
-        this.canvas.width = this.canvas.parentElement.offsetWidth;
+        // this.canvas.width = this.canvas.parentElement.offsetWidth;
+        this.canvas.width = 600;
         this.canvas.height = 600;
     };
     return Map;

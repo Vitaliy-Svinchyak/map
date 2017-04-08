@@ -65,13 +65,13 @@ var Area = (function () {
     /**
      * Subtracts the distance for all available points
      *
-     * @param offsetLeft
-     * @param offsetTop
+     * @param subLeft
+     * @param subTop
      */
-    Area.prototype.subOffsetPoints = function (offsetLeft, offsetTop) {
+    Area.prototype.subOffsetPoints = function (subLeft, subTop) {
         for (var _i = 0, _a = this.points; _i < _a.length; _i++) {
             var point = _a[_i];
-            point.subOffset(offsetLeft, offsetTop);
+            point.subOffset(subLeft, subTop);
         }
     };
     /**

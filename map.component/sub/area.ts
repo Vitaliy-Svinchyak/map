@@ -63,12 +63,12 @@ class Area {
   /**
    * Subtracts the distance for all available points
    *
-   * @param offsetLeft
-   * @param offsetTop
+   * @param subLeft
+   * @param subTop
    */
-  public subOffsetPoints(offsetLeft: number, offsetTop: number): void {
+  public subOffsetPoints(subLeft: number, subTop: number): void {
     for (const point of this.points) {
-      point.subOffset(offsetLeft, offsetTop);
+      point.subOffset(subLeft, subTop);
     }
   }
 

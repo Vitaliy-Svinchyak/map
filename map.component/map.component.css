@@ -1,3 +1,10 @@
+.map-scroll {
+  overflow: scroll;
+  width: 200px;
+  height: 200px;
+}
+
 #canvas {
-  background-color: #d5dfdb;
+  background-color: #F4C389;
+  border: 2px ridge #756048;
 }
