@@ -9,7 +9,6 @@ var Map = (function () {
         this.offset = 50;
         this.renderedAreas = 0;
         this.context = canvas.getContext('2d');
-        this.setWidthAndHeight();
         this.bindOnHover();
     }
     /**
@@ -19,6 +18,7 @@ var Map = (function () {
      */
     Map.prototype.renderMapAreas = function (areas) {
         this.areas = areas;
+        this.setWidthAndHeight();
         this.calculateOffset();
         for (var _i = 0, areas_1 = areas; _i < areas_1.length; _i++) {
             var area = areas_1[_i];
@@ -36,7 +36,7 @@ var Map = (function () {
      * Calculates how far all points can be moved
      */
     Map.prototype.calculateOffset = function () {
-        var minimalPoint = this.findMinimalPoint();
+        var minimalPoint = this.findLeftTopPoint();
         this.subTop = minimalPoint.y - this.offset;
         this.subLeft = minimalPoint.x - this.offset;
     };
@@ -45,7 +45,7 @@ var Map = (function () {
      *
      * @return {Point}
      */
-    Map.prototype.findMinimalPoint = function () {
+    Map.prototype.findLeftTopPoint = function () {
         var areas = this.areas;
         var theMostTopPoint = areas[0].topPoint;
         var theMostLeftPoint = areas[0].leftPoint;
@@ -61,12 +61,33 @@ var Map = (function () {
         return new Point(theMostTopPoint.x, theMostLeftPoint.y);
     };
     /**
+     * Finds the most right x and the most bottom y coordinates and returns a Point with that coordinates
+     *
+     * @return {Point}
+     */
+    Map.prototype.findRightBottomPoint = function () {
+        var areas = this.areas;
+        var theMostBottomPoint = areas[0].bottomPoint;
+        var theMostRightPoint = areas[0].rightPoint;
+        for (var _i = 0, areas_3 = areas; _i < areas_3.length; _i++) {
+            var area = areas_3[_i];
+            if (area.bottomPoint.y > theMostBottomPoint.y) {
+                theMostBottomPoint = area.bottomPoint;
+            }
+            if (area.rightPoint.x < theMostRightPoint.x) {
+                theMostRightPoint = area.rightPoint;
+            }
+        }
+        return new Point(theMostBottomPoint.x, theMostRightPoint.y);
+    };
+    /**
      * Dynamically determines how large a canvas can be and sets it size
      */
     Map.prototype.setWidthAndHeight = function () {
-        // this.canvas.width = this.canvas.parentElement.offsetWidth;
-        this.canvas.width = 600;
-        this.canvas.height = 600;
+        var leftTopPoint = this.findLeftTopPoint();
+        var rightBottomPoint = this.findRightBottomPoint();
+        this.canvas.width = rightBottomPoint.x - leftTopPoint.x + this.offset * 3;
+        this.canvas.height = rightBottomPoint.y - leftTopPoint.y + this.offset * 3;
     };
     Map.prototype.bindOnHover = function () {
         var that = this;

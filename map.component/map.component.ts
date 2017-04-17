@@ -12,7 +12,6 @@ class Map {
    */
   public constructor(private canvas: HTMLCanvasElement) {
     this.context = canvas.getContext('2d');
-    this.setWidthAndHeight();
     this.bindOnHover();
   }
 
@@ -23,6 +22,7 @@ class Map {
    */
   public renderMapAreas(areas: Area[]): void {
     this.areas = areas;
+    this.setWidthAndHeight();
     this.calculateOffset();
 
     for (const area of areas) {
@@ -42,7 +42,7 @@ class Map {
    * Calculates how far all points can be moved
    */
   private calculateOffset(): void {
-    const minimalPoint: Point = this.findMinimalPoint();
+    const minimalPoint: Point = this.findLeftTopPoint();
 
     this.subTop = minimalPoint.y - this.offset;
     this.subLeft = minimalPoint.x - this.offset;
@@ -53,7 +53,7 @@ class Map {
    *
    * @return {Point}
    */
-  private findMinimalPoint(): Point {
+  private findLeftTopPoint(): Point {
     const areas: Area[] = this.areas;
     let theMostTopPoint: Point = areas[0].topPoint;
     let theMostLeftPoint: Point = areas[0].leftPoint;
@@ -72,12 +72,37 @@ class Map {
   }
 
   /**
+   * Finds the most right x and the most bottom y coordinates and returns a Point with that coordinates
+   *
+   * @return {Point}
+   */
+  private findRightBottomPoint(): Point {
+    const areas: Area[] = this.areas;
+    let theMostBottomPoint: Point = areas[0].bottomPoint;
+    let theMostRightPoint: Point = areas[0].rightPoint;
+
+    for (const area of areas) {
+      if (area.bottomPoint.y > theMostBottomPoint.y) {
+        theMostBottomPoint = area.bottomPoint;
+      }
+
+      if (area.rightPoint.x < theMostRightPoint.x) {
+        theMostRightPoint = area.rightPoint;
+      }
+    }
+
+    return new Point(theMostBottomPoint.x, theMostRightPoint.y);
+  }
+
+  /**
    * Dynamically determines how large a canvas can be and sets it size
    */
   private setWidthAndHeight(): void {
-    // this.canvas.width = this.canvas.parentElement.offsetWidth;
-    this.canvas.width = 600;
-    this.canvas.height = 600;
+    const leftTopPoint = this.findLeftTopPoint();
+    const rightBottomPoint = this.findRightBottomPoint();
+
+    this.canvas.width = rightBottomPoint.x - leftTopPoint.x + this.offset * 3;
+    this.canvas.height = rightBottomPoint.y - leftTopPoint.y + this.offset * 3;
   }
 
   private bindOnHover(): void {
