@@ -88,6 +88,13 @@ var Map = (function () {
         var rightBottomPoint = this.findRightBottomPoint();
         this.canvas.width = rightBottomPoint.x - leftTopPoint.x + this.offset * 3;
         this.canvas.height = rightBottomPoint.y - leftTopPoint.y + this.offset * 3;
+        var canvasParent = this.canvas.parentElement;
+        if (this.canvas.width > canvasParent.offsetWidth) {
+            canvasParent.style.overflowX = 'scroll';
+        }
+        if (this.canvas.height > canvasParent.offsetHeight) {
+            canvasParent.style.overflowY = 'scroll';
+        }
     };
     Map.prototype.bindOnHover = function () {
         var that = this;
