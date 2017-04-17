@@ -3,6 +3,7 @@ class Area {
   public leftPoint: Point;
   public bottomPoint: Point;
   public rightPoint: Point;
+  private highlighted: boolean = false;
 
   /**
    * @param {Point[]} points
@@ -52,6 +53,8 @@ class Area {
       context.lineWidth = 4;
       this.renderLines(context);
       this.renderImage(context, imageObj);
+      context.lineWidth = 2;
+      this.renderLines(context);
       context.restore();
 
       onRender();
@@ -77,17 +80,55 @@ class Area {
    *
    * @param {CanvasRenderingContext2D} context
    */
-  public higlightBorders(context: CanvasRenderingContext2D): void {
-    context.save();
+  public highlightBorders(context: CanvasRenderingContext2D): void {
+    if (this.highlighted) {
+      return;
+    }
+
+    this.highlighted = true;
     context.beginPath();
     context.lineWidth = 2;
-    context.strokeStyle = '#5A80FF';
-    context.shadowColor = 'blue';
-    context.shadowBlur = 20;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+    context.strokeStyle = '#ff2725';
     this.renderLines(context);
-    context.restore();
+  }
+
+  /**
+   * @param {CanvasRenderingContext2D} context
+   */
+  public deleteHighlighting(context: CanvasRenderingContext2D): void {
+    if (!this.highlighted) {
+      return;
+    }
+
+    this.highlighted = false;
+    context.beginPath();
+    context.lineWidth = 2;
+    context.strokeStyle = 'black';
+    this.renderLines(context);
+  }
+
+  /**
+   * Checks if mousePoint is in area
+   *
+   * @param {Point} mousePoint
+   *
+   * @return {boolean}
+   */
+  public pointIsInArea(mousePoint: Point): boolean {
+    const points = this.points;
+    let result: boolean = false;
+    let length: number = points.length;
+
+    for (let i: number = -1, j: number = length - 1; ++i < length; j = i) {
+      (
+        (points[i].y <= mousePoint.y && mousePoint.y < points[j].y)
+        || (points[j].y <= mousePoint.y && mousePoint.y < points[i].y)
+      )
+      && (mousePoint.x < (points[j].x - points[i].x) * (mousePoint.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
+      && (result = !result);
+    }
+
+    return result;
   }
 
   /**

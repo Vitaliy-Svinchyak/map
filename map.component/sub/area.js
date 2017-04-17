@@ -6,6 +6,7 @@ var Area = (function () {
     function Area(points, backgroundImage) {
         this.points = points;
         this.backgroundImage = backgroundImage;
+        this.highlighted = false;
         this.findAndSetMinimalPoints();
     }
     Object.defineProperty(Area.prototype, "firstPoint", {
@@ -57,6 +58,8 @@ var Area = (function () {
             context.lineWidth = 4;
             _this.renderLines(context);
             _this.renderImage(context, imageObj);
+            context.lineWidth = 2;
+            _this.renderLines(context);
             context.restore();
             onRender();
         };
@@ -79,17 +82,47 @@ var Area = (function () {
      *
      * @param {CanvasRenderingContext2D} context
      */
-    Area.prototype.higlightBorders = function (context) {
-        context.save();
+    Area.prototype.highlightBorders = function (context) {
+        if (this.highlighted) {
+            return;
+        }
+        this.highlighted = true;
         context.beginPath();
         context.lineWidth = 2;
-        context.strokeStyle = '#5A80FF';
-        context.shadowColor = 'blue';
-        context.shadowBlur = 20;
-        context.shadowOffsetX = 0;
-        context.shadowOffsetY = 0;
+        context.strokeStyle = '#ff2725';
         this.renderLines(context);
-        context.restore();
+    };
+    /**
+     * @param {CanvasRenderingContext2D} context
+     */
+    Area.prototype.deleteHighlighting = function (context) {
+        if (!this.highlighted) {
+            return;
+        }
+        this.highlighted = false;
+        context.beginPath();
+        context.lineWidth = 2;
+        context.strokeStyle = 'black';
+        this.renderLines(context);
+    };
+    /**
+     * Checks if mousePoint is in area
+     *
+     * @param {Point} mousePoint
+     *
+     * @return {boolean}
+     */
+    Area.prototype.pointIsInArea = function (mousePoint) {
+        var points = this.points;
+        var result = false;
+        var length = points.length;
+        for (var i = -1, j = length - 1; ++i < length; j = i) {
+            ((points[i].y <= mousePoint.y && mousePoint.y < points[j].y)
+                || (points[j].y <= mousePoint.y && mousePoint.y < points[i].y))
+                && (mousePoint.x < (points[j].x - points[i].x) * (mousePoint.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
+                && (result = !result);
+        }
+        return result;
     };
     /**
      * Renders lines between all available points

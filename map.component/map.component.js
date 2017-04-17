@@ -10,6 +10,7 @@ var Map = (function () {
         this.renderedAreas = 0;
         this.context = canvas.getContext('2d');
         this.setWidthAndHeight();
+        this.bindOnHover();
     }
     /**
      * Renders all available areas with offset optimizzation
@@ -30,9 +31,6 @@ var Map = (function () {
      */
     Map.prototype.onAreaRendered = function () {
         this.renderedAreas++;
-        if (this.renderedAreas === this.areas.length) {
-            this.areas[1].higlightBorders(this.context);
-        }
     };
     /**
      * Calculates how far all points can be moved
@@ -69,6 +67,30 @@ var Map = (function () {
         // this.canvas.width = this.canvas.parentElement.offsetWidth;
         this.canvas.width = 600;
         this.canvas.height = 600;
+    };
+    Map.prototype.bindOnHover = function () {
+        var that = this;
+        this.canvas.addEventListener('mousemove', function (event) {
+            var rect = this.getBoundingClientRect();
+            that.onHover(event, rect);
+        });
+    };
+    /**
+     * @param {MouseEvent} event
+     * @param {ClientRect} rect
+     */
+    Map.prototype.onHover = function (event, rect) {
+        if (this.renderedAreas !== this.areas.length) {
+            return;
+        }
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        var point = new Point(x, y);
+        for (var _i = 0, _a = this.areas; _i < _a.length; _i++) {
+            var area = _a[_i];
+            var pointIsInArea = area.pointIsInArea(point);
+            pointIsInArea ? area.highlightBorders(this.context) : area.deleteHighlighting(this.context);
+        }
     };
     return Map;
 }());

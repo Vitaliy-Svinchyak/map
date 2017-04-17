@@ -13,6 +13,7 @@ class Map {
   public constructor(private canvas: HTMLCanvasElement) {
     this.context = canvas.getContext('2d');
     this.setWidthAndHeight();
+    this.bindOnHover();
   }
 
   /**
@@ -35,10 +36,6 @@ class Map {
    */
   public onAreaRendered(): void {
     this.renderedAreas++;
-
-    if (this.renderedAreas === this.areas.length) {
-      this.areas[1].higlightBorders(this.context);
-    }
   }
 
   /**
@@ -81,5 +78,33 @@ class Map {
     // this.canvas.width = this.canvas.parentElement.offsetWidth;
     this.canvas.width = 600;
     this.canvas.height = 600;
+  }
+
+  private bindOnHover(): void {
+    const that = this;
+
+    this.canvas.addEventListener('mousemove', function (event: MouseEvent) {
+      const rect = this.getBoundingClientRect();
+      that.onHover(event, rect);
+    });
+  }
+
+  /**
+   * @param {MouseEvent} event
+   * @param {ClientRect} rect
+   */
+  private onHover(event: MouseEvent, rect: ClientRect): void {
+    if (this.renderedAreas !== this.areas.length) {
+      return;
+    }
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const point: Point = new Point(x, y);
+
+    for (const area of this.areas) {
+      const pointIsInArea: boolean = area.pointIsInArea(point);
+      pointIsInArea ? area.highlightBorders(this.context) : area.deleteHighlighting(this.context);
+    }
   }
 }
